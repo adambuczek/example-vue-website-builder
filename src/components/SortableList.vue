@@ -17,24 +17,66 @@
       :key="i"
       class="item"
     >
-      {{ item }}
       <span class="actions">
         <span class="close" @click="remove(i)">⨉</span>
         <span class="drag-handle">≡</span>
       </span>
+
+      <ListItem :component="item" />
+
     </div>
   </Draggable>
 </template>
 
 <script>
 import { VueDraggableNext } from 'vue-draggable-next'
+import { createApp, h } from 'vue'
+
+import loadExternalComponent from '../utils/loadExternalComponent.js'
 
 const rm = (arr, i) => arr.slice(0, i).concat(arr.slice(i + 1))
+
+const ListItem = {
+  name: 'list-item',
+  props: {
+    component: Object,
+    data: Object
+  },
+  render: () => h('div', { ref: 'host' }),
+  mounted () {
+    const host = this.$refs.host
+
+    /**
+     * @fix https://v3.vuejs.org/guide/migration/async-components.html#introduction
+     */
+    const component = () => loadExternalComponent(this.component.script)
+
+    const render = () => h(component, {
+      style: { border: '1px dotted midnightblue' },
+      props: { ...this.data }
+    })
+
+    const shadowRoot = host.attachShadow({ mode: 'open' })
+    const shadowApp = document.createElement('div')
+
+    /** Load Styles */
+    const shadowStyle = document.createElement('link')
+    shadowStyle.href = this.component.style
+    shadowStyle.rel = 'stylesheet'
+
+    shadowRoot.appendChild(shadowApp)
+    shadowRoot.appendChild(shadowStyle)
+
+    createApp({ render }).mount(shadowApp)
+
+  }
+}
 
 export default {
   name: 'SortableList',
   components: {
-    Draggable: VueDraggableNext
+    Draggable: VueDraggableNext,
+    ListItem
   },
   data() {
     return {
