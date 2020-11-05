@@ -18,13 +18,18 @@
       class="item"
     >
       {{ item }}
-      <span class="drag-handle">≡</span>
+      <span class="actions">
+        <span class="close" @click="remove(i)">⨉</span>
+        <span class="drag-handle">≡</span>
+      </span>
     </div>
   </Draggable>
 </template>
 
 <script>
 import { VueDraggableNext } from 'vue-draggable-next'
+
+const rm = (arr, i) => arr.slice(0, i).concat(arr.slice(i + 1))
 
 export default {
   name: 'SortableList',
@@ -36,48 +41,67 @@ export default {
       listItems: [],
       dragover: false
     }
+  },
+  methods: {
+    remove(i) {
+      this.listItems = rm(this.listItems, i)
+    }
   }
 }
 </script>
 
 <style scoped>
-div.ul {
+.ul {
   list-style: none;
   padding: 0;
   margin: 0;
   min-height: 3em;
 }
 
-div.ul.dragover {
+.ul.dragover {
     border: 1px solid red;
   }
 
-div.ul.empty {
+.ul.empty {
   box-shadow: 0 0 10px inset rgba(0, 0, 0, .3);
   /* border: 1px solid red; */
 }
 
 
-div.item {
-  padding: 1em;
+.item:first-child {
+  margin-top: 0;
+}
+
+.item {
+  padding: 3em 1em 1em;
   margin: 1em 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .3);
   position: relative;
 }
 
-div.item span {
+.actions {
   align-items: center;
-  bottom: 0;
   content: '';
-  cursor: grab;
   display: flex;
   font-size: 1em;
   font-weight: bolder;
+  height: 3em;
   justify-content: center;
   line-height: 100%;
   position: absolute;
   right: 0;
   top: 0;
-  width: 3em;
+}
+
+.actions span {
+  margin-right: 1em;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.close {
+  cursor: pointer;
 }
 </style>

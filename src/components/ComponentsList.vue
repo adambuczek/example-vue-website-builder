@@ -53,18 +53,18 @@ export default {
 
 <style scoped>
 
-div.item:first-child {
+.item:first-child {
   margin-top: 0;
 }
 
-div.item {
+.item {
   padding: 1em;
   margin: 1em 0;
   box-shadow: 0 0 1px rgba(0, 0, 0, .3);
   position: relative;
 }
 
-div.item span {
+.item span {
   align-items: center;
   content: '';
   cursor: grab;
