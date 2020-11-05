@@ -1,9 +1,13 @@
+* {
+  box-sizing: content-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-  margin: 60px auto;
-  width: min(720px, 90%);
+  margin: 30px auto;
+  width: min(1080px, 100%);
 }

@@ -1,77 +1,83 @@
 <template>
-  <ul ref="list">
-    <li
+  <Draggable
+    :list="listItems"
+    handle=".drag-handle"
+    :class="{
+      empty: !listItems.length,
+      ul: true
+    }"
+    :group="{
+      name: 'target',
+      pull: false,
+      put: ['source']
+    }"
+  >
+    <div
       v-for="(item, i) in listItems"
       :key="i"
+      class="item"
     >
-      {{ item }}<DragHandle />
-    </li>
-  </ul>
+      {{ item }}
+      <span class="drag-handle">≡</span>
+    </div>
+  </Draggable>
 </template>
 
 <script>
-import Sortable from 'sortablejs'
-import { h } from 'vue'
-
-const DragHandle = {
-  name: 'drag-handle',
-  render: () => h('span', {
-    class: 'drag-handle'
-  }, '≡')
-}
+import { VueDraggableNext } from 'vue-draggable-next'
 
 export default {
   name: 'SortableList',
   components: {
-    DragHandle
+    Draggable: VueDraggableNext
   },
   data() {
     return {
-      listItems: [
-        'one',
-        'two',
-        'three',
-        'four',
-        'five'
-      ]
+      listItems: [],
+      dragover: false
     }
-  },
-  mounted () {
-    const list = this.$refs.list
-    Sortable.create(list, {
-      handle: 'span.drag-handle',
-    })
   }
 }
 </script>
 
 <style scoped>
-ul {
+div.ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  min-height: 3em;
 }
 
-li {
+div.ul.dragover {
+    border: 1px solid red;
+  }
+
+div.ul.empty {
+  box-shadow: 0 0 10px inset rgba(0, 0, 0, .3);
+  /* border: 1px solid red; */
+}
+
+
+div.item {
   padding: 1em;
   margin: 1em 0;
-  box-shadow: 0 0 1px rgba(0, 0, 0, .3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
   position: relative;
 }
 
-li span {
-  position: absolute;
-  content: '';
-  right: 0;
-  top: 0;
+div.item span {
+  align-items: center;
   bottom: 0;
-  width: 3em;
+  content: '';
+  cursor: grab;
+  display: flex;
   font-size: 1em;
   font-weight: bolder;
-  line-height: 100%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: grab;
+  line-height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 3em;
 }
 </style>
