@@ -30,7 +30,7 @@
 
 <script>
 import { VueDraggableNext } from 'vue-draggable-next'
-import { createApp, h } from 'vue'
+import Vue from 'vue'
 
 import loadExternalComponent from '../utils/loadExternalComponent.js'
 
@@ -42,17 +42,14 @@ const ListItem = {
     component: Object,
     data: Object
   },
-  render: () => h('div', { ref: 'host' }),
+  render: h => h('div', { ref: 'host' }),
   mounted () {
     const host = this.$refs.host
 
-    /**
-     * @fix https://v3.vuejs.org/guide/migration/async-components.html#introduction
-     */
     const component = () => loadExternalComponent(this.component.script)
 
-    const render = () => h(component, {
-      style: { border: '1px dotted midnightblue' },
+    const render = h => h(component, {
+      style: { border: '1px dotted red' },
       props: { ...this.data }
     })
 
@@ -67,7 +64,7 @@ const ListItem = {
     shadowRoot.appendChild(shadowApp)
     shadowRoot.appendChild(shadowStyle)
 
-    createApp({ render }).mount(shadowApp)
+    new Vue({ render }).$mount('#app')
 
   }
 }
