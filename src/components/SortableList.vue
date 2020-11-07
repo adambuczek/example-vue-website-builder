@@ -1,9 +1,9 @@
 <template>
   <Draggable
-    :list="listItems"
+    :list="components"
     handle=".drag-handle"
     :class="{
-      empty: !listItems.length,
+      empty: !components.length,
       ul: true
     }"
     :group="{
@@ -13,23 +13,40 @@
     }"
   >
     <div
-      v-for="(item, i) in listItems"
-      :key="i"
+      v-for="({ component, data }, i) in components"
+      :key="i + component.name"
       class="item"
     >
+
       <span class="actions">
+        <!-- <span class="edit" @click="edit(i)">🖉</span> -->
         <span class="close" @click="remove(i)">⨉</span>
         <span class="drag-handle">≡</span>
       </span>
 
-      <ListItem :component="item" />
+      <div>
+        <span
+          v-for="prop in component.props"
+          :key="prop"
+        >
+          <input
+            type="text"
+            v-model="data[prop]"
+          />
+        </span>
+      </div>
+
+      <ListItem
+        :component="component"
+        :data="data"
+      />
 
     </div>
   </Draggable>
 </template>
 
 <script>
-import { VueDraggableNext } from 'vue-draggable-next'
+import Draggable from 'vuedraggable'
 import Vue from 'vue'
 
 import loadExternalComponent from '../utils/loadExternalComponent.js'
@@ -64,26 +81,40 @@ const ListItem = {
     shadowRoot.appendChild(shadowApp)
     shadowRoot.appendChild(shadowStyle)
 
-    new Vue({ render }).$mount('#app')
-
+    new Vue({
+      render
+    }).$mount(shadowApp)
   }
 }
 
 export default {
   name: 'SortableList',
   components: {
-    Draggable: VueDraggableNext,
+    Draggable,
     ListItem
   },
   data() {
     return {
-      listItems: [],
+      components: [],
+      componentsData: [],
       dragover: false
     }
   },
   methods: {
     remove(i) {
-      this.listItems = rm(this.listItems, i)
+      this.components = rm(this.components, i)
+      this.componentsData = rm(this.componentsData, i)
+    },
+    edit(event, index, prop) {
+      const value = event.target.value
+      const current = this.componentsData[index] || {}
+
+      console.log(event, index, prop)
+
+      Vue.set(this.componentsData, index, {
+        ...current,
+        [prop]: value
+      })
     }
   }
 }
@@ -139,7 +170,7 @@ export default {
 .drag-handle {
   cursor: grab;
 }
-
+.edit,
 .close {
   cursor: pointer;
 }

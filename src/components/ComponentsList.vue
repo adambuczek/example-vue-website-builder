@@ -8,9 +8,10 @@
       put: false
     }"
     :sort="false"
+    :clone="cloningMethod"
   >
     <div
-      v-for="(component, i) in listItems"
+      v-for="({ component }, i) in listItems"
       :key="i"
       class="item"
     >
@@ -22,16 +23,29 @@
 </template>
 
 <script>
-import { VueDraggableNext } from 'vue-draggable-next'
+import Draggable from 'vuedraggable'
+import _cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'ComponentsList',
   components: {
-    Draggable: VueDraggableNext
+    Draggable
   },
   data() {
     return {
       listItems: []
+    }
+  },
+  methods: {
+    cloningMethod(original) {
+      console.log(original)
+      /**
+       * deeply clone the data template
+       */
+      return {
+        ...original,
+        data: _cloneDeep(original.data)
+      }
     }
   },
   async mounted () {
@@ -40,13 +54,24 @@ export default {
       .then(response => response.json())
 
     this.listItems = libraryManifest.components.map(component => {
-      return {
+      const componentWithSources = {
         ...component,
         img: libraryUrl + component.img,
         style: libraryUrl + component.style,
         script: libraryUrl + component.script
       }
+
+      const data = component.props.reduce((accumulator, current) => {
+        accumulator[current] = ''
+        return accumulator
+      }, {})
+
+      return {
+        component: componentWithSources,
+        data
+      }
     })
+
   }
 }
 </script>

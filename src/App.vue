@@ -1,5 +1,5 @@
 <template>
-  <div class="columns">
+  <div class="columns" id="app">
     <div class="right">
       <SortableList />
     </div>
@@ -23,6 +23,20 @@ export default {
 </script>
 
 <style scoped>
+* {
+  box-sizing: content-box;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #2c3e50;
+  margin: 30px auto;
+  width: min(1080px, 100%);
+}
+
 .columns {
   display: flex;
 }
